@@ -1,9 +1,28 @@
 package com.epam.training.maksim_skarabahaty.main_task;
 
 
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Task5 {
+
+    static HashMap<Integer, String> months = new HashMap<>();
+    static {
+        months.put(1, "January");
+        months.put(2, "February");
+        months.put(3, "March");
+        months.put(4, "April");
+        months.put(5, "May");
+        months.put(6, "June");
+        months.put(7, "July");
+        months.put(8, "August");
+        months.put(9, "September");
+        months.put(10, "October");
+        months.put(11, "November");
+        months.put(12, "December");
+    }
+
 
     public static void main(String[] args) {
 
@@ -16,20 +35,13 @@ public class Task5 {
             System.out.println("Not a number in input");
         }
 
-        switch (monthNumber) {
-            case 1 -> System.out.println("January");
-            case 2 -> System.out.println("February");
-            case 3 -> System.out.println("March");
-            case 4 -> System.out.println("April");
-            case 5 -> System.out.println("May");
-            case 6 -> System.out.println("June");
-            case 7 -> System.out.println("July");
-            case 8 -> System.out.println("August");
-            case 9 -> System.out.println("September");
-            case 10 -> System.out.println("October");
-            case 11 -> System.out.println("November");
-            case 12 -> System.out.println("December");
-            default -> System.out.println("Wrong number");
-        }
+        String month = months.get(monthNumber);
+
+        System.out.println(
+                Objects.requireNonNullElse(
+                        month,
+                        "Something went wrong"
+                )
+        );
     }
 }
