@@ -12,6 +12,10 @@ import java.util.regex.Pattern;
 public class Task {
 
 
+    public static final String DIGITS_SEPARATOR = "";
+    public static final String EMPTY_STRING = "";
+    public static final String DIGITS = "[0123456789]";
+
     public static void main(String[] args) {
 
         String[] numbersInString = readValuesFromConsole();
@@ -35,21 +39,18 @@ public class Task {
         checkForCondition4(numbersInString);
         delimiter();//task 4 end
 
-        /*5.Найти количество чисел, содержащих только четные цифры,
+        /*
+        5.Найти количество чисел, содержащих только четные цифры,
         а среди оставшихся — количество чисел с равным числом четных и нечетных цифр.
          */
         checkForCondition5(numbersInString);
+        delimiter();//task 5 end
 
+        checkForCondition6(numbersInString);
+        delimiter();//task 6 end
 
-
-
-    /*
-
-6. Найти число, цифры в котором идут в строгом порядке возрастания.
- Если таких чисел несколько, найти первое из них.
-
-7. Найти число, состоящее только из различных цифр.
- Если таких чисел несколько, найти первое из них.*/
+        checkForCondition7(numbersInString);
+        delimiter();//task 7 end
     }
 
     private static String[] readValuesFromConsole() {
@@ -73,7 +74,7 @@ public class Task {
 
     private static void findLongestNumber(String[] numbers) {
 
-        String longestElement = "";
+        String longestElement = EMPTY_STRING;
         int maxLength = 0;
 
         for (String number : numbers) {
@@ -108,14 +109,14 @@ public class Task {
         String[] localString = Arrays.copyOf(numbersInString, numbersInString.length);
         List<String> strings = Arrays.asList(localString);
         strings.sort(Comparator.comparingInt(String::length));
-        System.out.println("Ordered incr. : " + strings);
+        System.out.println("Increasing order : " + strings);
     }
 
     private static void printInDecreasingOrder(String[] numbersInString) {
         String[] localString = Arrays.copyOf(numbersInString, numbersInString.length);
         List<String> strings = Arrays.asList(localString);
         strings.sort((leftString, rightString) -> rightString.length() - leftString.length());
-        System.out.println("Ordered decr. : " + strings);
+        System.out.println("Decreasing order : " + strings);
     }
 
     private static double getAverageLength(String[] numbers) {
@@ -124,7 +125,7 @@ public class Task {
             lengthsSum += number.length();
         }
 
-        double averageLength = (double)lengthsSum / numbers.length;
+        double averageLength = (double) lengthsSum / numbers.length;
         System.out.println("Average length = " + averageLength);
         delimiter();
         return averageLength;
@@ -150,11 +151,11 @@ public class Task {
     private static void checkForCondition4(String[] numbersInString) {
 
         int minDigitsCounter = Integer.MAX_VALUE;
-        String numberWithLeastDifferentDigits = "";
+        String numberWithLeastDifferentDigits = EMPTY_STRING;
 
         for (String numberInString : numbersInString) {
 
-            String digits = "[0123456789]";
+            String digits = DIGITS;
             Pattern pattern = Pattern.compile(digits);
             Matcher matcher = pattern.matcher(numberInString);
             int localCounter = 0;
@@ -162,7 +163,7 @@ public class Task {
             while (matcher.find()) {
                 String group = matcher.group();
                 localCounter++;
-                digits = digits.replace(group, "");
+                digits = digits.replace(group, DIGITS_SEPARATOR);
 
                 pattern = Pattern.compile(digits);
                 matcher = pattern.matcher(numberInString);
@@ -178,17 +179,13 @@ public class Task {
     }
 
     private static void checkForCondition5(String[] numbersInString) {
-        /*5.Найти количество чисел, содержащих только четные цифры,
-        а среди оставшихся — количество чисел с равным числом четных и нечетных цифр.
-         */
 
         String[] localArray = Arrays.copyOf(numbersInString, numbersInString.length);
-        List<String> localArrayList = Arrays.asList(localArray);
 
-        int localCounter = 0;
+        int localCounterForAllEvenDigits = 0;
 
         for (int i = 0; i < localArray.length; i++) {
-            String[] digitsOfNumber = localArray[i].split("");
+            String[] digitsOfNumber = localArray[i].split(DIGITS_SEPARATOR);
             boolean areAllEven = true;
             for (String digitOfNumber : digitsOfNumber) {
 
@@ -200,16 +197,103 @@ public class Task {
             }
 
             if (areAllEven) {
-                localCounter++;
+                localCounterForAllEvenDigits++;
+                localArray = removeElementFromArray(localArray, i);
             }
         }
+
+        int localCounterForEqualOddsAndEvens = 0;
         for (String numberInString : localArray) {
 
+            if (numberInString.length() % 2 == 0) {
+                String[] digitsInNumber = numberInString.split(DIGITS_SEPARATOR);
 
+                int localEvensCounter = 0;
+                for (String digit : digitsInNumber) {
+                    int number = Integer.parseInt(digit);
+                    if (number % 2 == 0) {
+                        localEvensCounter++;
+                    }
+                }
+                if (localEvensCounter == digitsInNumber.length / 2) {
+                    localCounterForEqualOddsAndEvens++;
+                }
+            }
         }
 
+        System.out.println("Amount of numbers with all even digits = " + localCounterForAllEvenDigits);
+        System.out.println("Amount of rest numbers with equal evens and odds = " + localCounterForEqualOddsAndEvens);
+    }
 
-        System.out.println("Amount of number with all even digits = " + localCounter);
+    private static String[] removeElementFromArray(String[] localArray, int index) {
+        String[] returnArray = new String[localArray.length - 1];
+        if (index >= 0) {
+            System.arraycopy(localArray, 0, returnArray, 0, index);
+            System.arraycopy(localArray, index + 1, returnArray, index, localArray.length - index - 1);
+        }
+        return returnArray;
+    }
 
+    private static void checkForCondition6(String[] numbersInString) {
+
+        String returnString = EMPTY_STRING;
+
+        for (String numberInString : numbersInString) {
+
+            String[] digitsInNumber = numberInString.split(DIGITS_SEPARATOR);
+
+            int firstDigit = Integer.parseInt(digitsInNumber[0]);
+            boolean isIncreasing = true;
+
+            for (int i = 1; i < digitsInNumber.length; i++) {
+
+                int digit = Integer.parseInt(digitsInNumber[i]);
+                if (digit <= firstDigit) {
+                    isIncreasing = false;
+                    break;
+                }
+                firstDigit = digit;
+            }
+
+            if (isIncreasing) {
+                returnString = numberInString;
+                break;
+            }
+        }
+
+        if (returnString.equals(EMPTY_STRING)) {
+            System.out.println("No numbers with increasing digits");
+        } else {
+            System.out.println("Number, where digits increasing = " + returnString);
+        }
+    }
+
+    private static void checkForCondition7(String[] numbersInString) {
+
+        String returnString = EMPTY_STRING;
+
+        for (String numberInString : numbersInString) {
+
+            StringBuilder forDigitsSearch = new StringBuilder(EMPTY_STRING);
+            String[] digitsInNumber = numberInString.split(DIGITS_SEPARATOR);
+
+            for (String digit : digitsInNumber) {
+                if (forDigitsSearch.indexOf(digit) == -1) {
+                    forDigitsSearch.append(digit);
+                } else {
+                    break;
+                }
+            }
+
+            if (forDigitsSearch.toString().equals(numberInString)) {
+                returnString = numberInString;
+                break;
+            }
+        }
+        if (returnString.equals(EMPTY_STRING)) {
+            System.out.println("No digits with all different digits");
+        } else {
+            System.out.println("Number with all different digits = " + returnString);
+        }
     }
 }
