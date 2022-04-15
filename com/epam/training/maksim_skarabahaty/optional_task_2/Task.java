@@ -14,77 +14,21 @@ public class Task {
         int[][] matrix = generateMatrix();
         fillMatrix(matrix);
         printMatrix(matrix);
-        int[][] cloneOfMatrix = matrix.clone();
 
-        int[][] linesByColumn = sortLinesByColumn(cloneOfMatrix);
+        int[][] linesByColumn = sortLinesByColumn(matrix);
         printMatrix(linesByColumn);
         printMatrix(matrix);
 
-
-        int[][] columnsByLine = sortColumnsByLine(cloneOfMatrix);
+        int[][] columnsByLine = sortColumnsByLine(matrix);
         printMatrix(columnsByLine);
         printMatrix(matrix);
 
-
         findAmountOfIncreasingValues(matrix);
-
         findAmountOfDecreasingValues(matrix);
 
         findSumBetweenFirstPositiveAndSecondPositive(matrix);
 
         findMaxElementAndRemoveLinesAndColumnsWithIt(matrix);
-
-/*
-
-4. Найти максимальный элемент в матрице и удалить из матрицы все строки и столбцы, его содержащие
-*/
-
-
-    }
-
-    private static void findMaxElementAndRemoveLinesAndColumnsWithIt(int[][] matrix) {
-
-        int maxElement = findMaxElement(matrix);
-
-        boolean[] doesLineContainMaxValue = new boolean[matrix.length];
-        doesLineContainMaxValue(doesLineContainMaxValue, matrix, maxElement);
-
-        boolean[] doesColumnContainMaxValue = new boolean[matrix.length];
-        doesColumnContainMaxValue(doesColumnContainMaxValue, matrix, maxElement);
-
-        int lineNumberForNewMatrix = getLineNumberForNewMatrix(matrix, doesLineContainMaxValue);
-
-        int columnNumberForNewMatrix = getLineNumberForNewMatrix(matrix, doesColumnContainMaxValue);
-
-        int[][] newMatrix = new int[lineNumberForNewMatrix][columnNumberForNewMatrix];
-
-        int lineCounter = 0;
-        for (int i = 0; i < matrix.length; i++) {
-
-            if (! doesLineContainMaxValue[i]) {
-                int columnCounter = 0;
-                for (int j = 0; j < matrix[i].length; j++) {
-
-                    if (!doesColumnContainMaxValue[j]) {
-                        newMatrix[lineCounter][columnCounter] = matrix[i][j];
-                        columnCounter++;
-                    }
-                }
-                lineCounter++;
-            }
-        }
-
-        printMatrix(newMatrix);
-    }
-
-    private static int getLineNumberForNewMatrix(int[][] matrix, boolean[] doesLineContainMaxValue) {
-        int lineNumberForNewMatrix = matrix.length;
-        for (boolean isContainMaxValue : doesLineContainMaxValue) {
-            if (isContainMaxValue) {
-                lineNumberForNewMatrix--;
-            }
-        }
-        return lineNumberForNewMatrix;
     }
 
     private static int[][] generateMatrix() {
@@ -117,65 +61,80 @@ public class Task {
         System.out.println("-".repeat(50));
     }
 
+
+
     private static int[][] sortLinesByColumn(int[][] matrix) {
+
+        int[][] sortedMatrix = new int[matrix.length][matrix[0].length];
+        rewriteMatrix(matrix, sortedMatrix);
 
         int columnNumber;
         do {
             System.out.println("Enter the number of column (starting with ZERO), needed to sort: ");
             columnNumber = scanner.nextInt();
-        } while (columnNumber > matrix.length || columnNumber < 0);
+        } while (columnNumber > sortedMatrix.length || columnNumber < 0);
 
         boolean isSorted = true;
         do {
-            for (int i = 0; i < matrix.length - 1; i++) {
+            for (int i = 0; i < sortedMatrix.length - 1; i++) {
                 isSorted = true;
 
-                for (int j = 0; j < matrix.length - i - 1; j++) {
-                    if (matrix[j][columnNumber] > matrix[j + 1][columnNumber]) {
+                for (int j = 0; j < sortedMatrix.length - i - 1; j++) {
+                    if (sortedMatrix[j][columnNumber] > sortedMatrix[j + 1][columnNumber]) {
                         isSorted = false;
 
-                        int[] temp = Arrays.copyOf(matrix[j], matrix[j].length);
-                        matrix[j] = matrix[j + 1];
-                        matrix[j + 1] = temp;
+                        int[] temp = Arrays.copyOf(sortedMatrix[j], sortedMatrix[j].length);
+                        sortedMatrix[j] = sortedMatrix[j + 1];
+                        sortedMatrix[j + 1] = temp;
                     }
                 }
             }
         } while (!isSorted);
 
-        return matrix;
+        return sortedMatrix;
     }
 
     private static int[][] sortColumnsByLine(int[][] matrix) {
 
-        int[][] localMatrix = Arrays.copyOf(matrix, matrix.length);
+        int[][] sortedMatrix = new int[matrix.length][matrix[0].length];
+        rewriteMatrix(matrix, sortedMatrix);
 
         int lineNumber;
         do {
             System.out.println("Enter the number of line (starting with ZERO), needed to sort: ");
             lineNumber = scanner.nextInt();
-        } while (lineNumber > localMatrix.length || lineNumber < 0);
+        } while (lineNumber > sortedMatrix.length || lineNumber < 0);
 
         boolean isSorted = true;
         do {
-            for (int i = 0; i < localMatrix.length - 1; i++) {
+            for (int i = 0; i < sortedMatrix.length - 1; i++) {
                 isSorted = true;
 
-                for (int j = 0; j < localMatrix.length - i - 1; j++) {
-                    if (localMatrix[lineNumber][j] > localMatrix[lineNumber][j + 1]) {
+                for (int j = 0; j < sortedMatrix.length - i - 1; j++) {
+                    if (sortedMatrix[lineNumber][j] > sortedMatrix[lineNumber][j + 1]) {
                         isSorted = false;
 
-                        for (int k = 0; k < localMatrix.length; k++) {
-                            int temp = localMatrix[k][j];
-                            localMatrix[k][j] = localMatrix[k][j + 1];
-                            localMatrix[k][j + 1] = temp;
+                        for (int k = 0; k < sortedMatrix.length; k++) {
+                            int temp = sortedMatrix[k][j];
+                            sortedMatrix[k][j] = sortedMatrix[k][j + 1];
+                            sortedMatrix[k][j + 1] = temp;
                         }
                     }
                 }
             }
         } while (!isSorted);
 
-        return localMatrix;
+        return sortedMatrix;
     }
+
+    private static void rewriteMatrix(int[][] matrix, int[][] sortedMatrix) {
+
+        for (int i = 0; i < matrix.length; i++) {
+            System.arraycopy(matrix[i], 0, sortedMatrix[i], 0, matrix[0].length);
+        }
+    }
+
+
 
     private static void findAmountOfIncreasingValues(int[][] matrix) {
 
@@ -230,6 +189,8 @@ public class Task {
 
     }
 
+
+
     private static void findSumBetweenFirstPositiveAndSecondPositive(int[][] matrix) {
 
 
@@ -257,18 +218,70 @@ public class Task {
                 System.out.printf("Sum for line %d = %d%n", i, sumForLine);
 
             } else {
-                for (int k = indexOfFirstPositive + 1; k < indexOfSecondPositive - indexOfFirstPositive; k++) {
+                for (int k = indexOfFirstPositive + 1; k < indexOfSecondPositive; k++) {
                     sumForLine += matrix[i][k];
                 }
                 System.out.printf("Sum for line %d = %d%n", i, sumForLine);
             }
         }
+        System.out.println("-".repeat(50));
+    }
+
+
+
+    private static void findMaxElementAndRemoveLinesAndColumnsWithIt(int[][] matrix) {
+
+        int maxElement = findMaxElement(matrix);
+
+        boolean[] doesLineContainMaxValue = new boolean[matrix.length];
+        doesLineContainMaxValue(doesLineContainMaxValue, matrix, maxElement);
+
+        boolean[] doesColumnContainMaxValue = new boolean[matrix.length];
+        doesColumnContainMaxValue(doesColumnContainMaxValue, matrix, maxElement);
+
+        int lineNumberForNewMatrix = getLineNumberForNewMatrix(matrix, doesLineContainMaxValue);
+
+        int columnNumberForNewMatrix = getColumnNumberForNewMatrix(matrix, doesColumnContainMaxValue);
+
+        int[][] newMatrix = new int[lineNumberForNewMatrix][columnNumberForNewMatrix];
+
+        int lineCounter = 0;
+        for (int i = 0; i < matrix.length; i++) {
+
+            if (! doesLineContainMaxValue[i]) {
+                int columnCounter = 0;
+                for (int j = 0; j < matrix[i].length; j++) {
+
+                    if (!doesColumnContainMaxValue[j]) {
+                        newMatrix[lineCounter][columnCounter] = matrix[i][j];
+                        columnCounter++;
+                    }
+                }
+                lineCounter++;
+            }
+        }
+
+        printMatrix(newMatrix);
+    }
+
+
+    private static int findMaxElement(int[][] matrix) {
+
+        int maxElement = Integer.MIN_VALUE;
+        for (int[] ints : matrix) {
+            for (int anInt : ints) {
+                if (anInt > maxElement) {
+                    maxElement = anInt;
+                }
+            }
+        }
+        return maxElement;
     }
 
     private static void doesColumnContainMaxValue(boolean[] doesColumnContainMaxValue, int[][] matrix, int maxElement) {
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] == maxElement) {
+        for (int[] ints : matrix) {
+            for (int j = 0; j < ints.length; j++) {
+                if (ints[j] == maxElement) {
                     doesColumnContainMaxValue[j] = true;
                 }
             }
@@ -287,16 +300,25 @@ public class Task {
         }
     }
 
-    private static int findMaxElement(int[][] matrix) {
-
-        int maxElement = Integer.MIN_VALUE;
-        for (int[] ints : matrix) {
-            for (int anInt : ints) {
-                if (anInt > maxElement) {
-                    maxElement = anInt;
-                }
+    private static int getColumnNumberForNewMatrix(int[][] matrix, boolean[] doesColumnContainMaxValue) {
+        int columnNumberForNewMatrix = matrix.length;
+        for (boolean isContainMaxValue : doesColumnContainMaxValue) {
+            if (isContainMaxValue) {
+                columnNumberForNewMatrix--;
             }
         }
-        return maxElement;
+        return columnNumberForNewMatrix;
+    }
+
+    private static int getLineNumberForNewMatrix(int[][] matrix, boolean[] doesLineContainMaxValue) {
+        int lineNumberForNewMatrix = matrix.length;
+        for (boolean isContainMaxValue : doesLineContainMaxValue) {
+            if (isContainMaxValue) {
+                lineNumberForNewMatrix--;
+            }
+        }
+        return lineNumberForNewMatrix;
     }
 }
+
+
